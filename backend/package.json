@@ -1,0 +1,28 @@
+{
+  "name": "backend",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "db:init": "tsx src/db/init.ts"
+  },
+  "dependencies": {
+    "@ai-sdk/anthropic": "^3.0.58",
+    "@ai-sdk/azure": "^3.0.42",
+    "@ai-sdk/openai": "^3.0.41",
+    "@hono/node-server": "^1.13.0",
+    "ai": "^6.0.116",
+    "better-sqlite3": "^11.7.0",
+    "dotenv": "^16.4.0",
+    "hono": "^4.7.0",
+    "sharp": "^0.34.5",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.0",
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}
