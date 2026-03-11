@@ -153,11 +153,12 @@ export default function ChatPane({ pendingMessage, onPendingConsumed, currentUse
   return (
     <div className="chat-pane">
       <div className="chat-header">
-        <div className="chat-header-dot" />
-        <div>
-          <div className="chat-header-title">{t('chat.title')}</div>
-          <div className="chat-header-status">{t('chat.status')}</div>
-        </div>
+        <svg className="chat-header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M20.42 4.58a5.4 5.4 0 0 0-7.65 0l-.77.78-.77-.78a5.4 5.4 0 0 0-7.65 0 5.4 5.4 0 0 0 0 7.65L12 20.65l8.42-8.42a5.4 5.4 0 0 0 0-7.65z" />
+          <path d="M12 13L7 8" />
+          <path d="M17 8l-5 5" />
+        </svg>
+        <div className="chat-header-title">{t('chat.title')}</div>
       </div>
 
       <div className="chat-messages">

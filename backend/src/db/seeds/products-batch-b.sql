@@ -95,7 +95,7 @@ Omega-3濃度極高，磷、維生素A和D豐富。Exceptional Omega-3 concentra
 【產季】全年供應（養殖）Year-round (farmed).'),
 
 ('帝王蟹（整隻）', 'Whole King Crab', '元家', 'shellfish', '阿拉斯加野生帝王蟹整隻，體型壯觀，蟹腳飽滿，蟹肉鮮甜細嫩，是海鮮中的皇者，適合豪華宴客場合。', 'Whole wild Alaskan king crab — spectacular size, legs packed with sweet, tender meat. The king of seafood for the most lavish occasions.', 3800, 'per crab (~2-3kg)',
-'/cdn/images/products/46-01.jpg', '["阿拉斯加野生","整隻帝王蟹","皇者風範","豪華宴客"]', 1,
+'/cdn/images/products/47-01.jpg', '["阿拉斯加野生","整隻帝王蟹","皇者風範","豪華宴客"]', 1,
 '【產地與來源 Origin & Sourcing】
 阿拉斯加白令海峽MSC認證野生紅帝王蟹（Paralithodes camtschaticus），每年10-1月捕撈，重量2-3公斤，蟹腳伸展可達1.2米，蟹肉雪白細嫩鮮甜。捕撈後急速冷凍維持鮮度。
 

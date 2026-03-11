@@ -480,6 +480,17 @@ body {
   opacity: 1;
 }
 
+/* Multi-image indicator watermark */
+.product-card-multi-img {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  color: rgba(255, 255, 255, 0.45);
+  z-index: 2;
+  pointer-events: none;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+}
+
 .product-card-image-fallback {
   display: flex;
   flex-direction: column;
@@ -570,11 +581,30 @@ body {
   color: var(--text-secondary);
   line-height: 1.8;
   margin-bottom: var(--space-md);
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
   overflow: hidden;
   font-weight: 300;
+  height: calc(1.8em * 3); /* fixed 3 lines */
+  position: relative;
+}
+
+.product-card-desc-inner {
+  display: block;
+}
+
+/* Slow scroll for overflowing text */
+.product-card-desc-overflow .product-card-desc-inner {
+  animation: descScroll 8s ease-in-out infinite;
+  animation-play-state: paused;
+}
+
+.product-card:hover .product-card-desc-overflow .product-card-desc-inner {
+  animation-play-state: running;
+}
+
+@keyframes descScroll {
+  0%, 15% { transform: translateY(0); }
+  45%, 55% { transform: translateY(var(--scroll-dist)); }
+  85%, 100% { transform: translateY(0); }
 }
 
 .product-card-footer {
@@ -624,16 +654,19 @@ body {
 .product-feature-tag {
   font-size: 11px;
   padding: 3px 10px;
-  border: 1px solid var(--border-subtle);
-  color: var(--text-secondary);
-  font-weight: 300;
+  background: var(--accent, rgba(224, 138, 110, 0.15));
+  border: 1px solid var(--accent-border, rgba(224, 138, 110, 0.25));
+  color: var(--accent-text, #e08a6e);
+  font-weight: 400;
   letter-spacing: 0.5px;
-  transition: border-color 0.3s ease, color 0.3s ease;
+  border-radius: 3px;
+  transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 }
 
 .product-card:hover .product-feature-tag {
-  border-color: var(--border-light);
-  color: var(--text-primary);
+  background: var(--accent-hover, rgba(224, 138, 110, 0.22));
+  border-color: var(--accent-border-hover, rgba(224, 138, 110, 0.4));
+  color: var(--accent-text-hover, #d47a5e);
 }
 
 /* ── Gift Tag ─────────────────────────────────────────────── */
@@ -958,18 +991,12 @@ body {
   flex-shrink: 0;
 }
 
-.chat-header-dot {
-  width: 8px;
-  height: 8px;
-  background: var(--success);
-  border-radius: 50%;
-  box-shadow: 0 0 8px rgba(110, 231, 183, 0.4);
-  animation: gentlePulse 3s ease-in-out infinite;
-}
-
-@keyframes gentlePulse {
-  0%, 100% { opacity: 1; box-shadow: 0 0 8px rgba(110, 231, 183, 0.4); }
-  50% { opacity: 0.7; box-shadow: 0 0 12px rgba(110, 231, 183, 0.6); }
+.chat-header-icon {
+  width: 18px;
+  height: 18px;
+  color: #e08a6e;
+  flex-shrink: 0;
+  opacity: 0.85;
 }
 
 .chat-header-title {
@@ -978,14 +1005,6 @@ body {
   font-weight: 500;
   color: var(--text-hero);
   letter-spacing: 2px;
-}
-
-.chat-header-status {
-  font-family: var(--font-display);
-  font-size: 11px;
-  color: var(--text-ghost);
-  letter-spacing: 2px;
-  font-style: italic;
 }
 
 /* ── Chat Messages ────────────────────────────────────────── */
@@ -1717,9 +1736,6 @@ body {
   background: rgba(255, 255, 255, 0.8);
 }
 
-[data-theme="light"] .chat-header-dot {
-  box-shadow: 0 0 8px rgba(21, 128, 61, 0.3);
-}
 
 [data-theme="light"] .chat-command-menu {
   background: #ffffff;

@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
-    "db:init": "tsx src/db/init.ts"
+    "db:seed": "tsx src/db/init.ts"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.58",
