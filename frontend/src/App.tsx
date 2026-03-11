@@ -5,7 +5,13 @@ import ChatPane from './components/ChatPane';
 import { ContentSyncContext, type ContentState } from './hooks/useContentSync';
 import { I18nContext, createT } from './i18n/context';
 import type { Locale } from './i18n/translations';
-import { fetchCustomers, type Product, type CustomerSummary } from './lib/api';
+import { fetchCustomers, fetchProducts, type Product, type CustomerSummary } from './lib/api';
+
+/** Parse /product/:id from a URL pathname. Returns product ID or null. */
+function parseProductRoute(pathname: string): number | null {
+  const m = pathname.match(/^\/product\/(\d+)$/);
+  return m ? Number(m[1]) : null;
+}
 
 interface UserSettings {
   theme: 'dark' | 'light';
@@ -93,6 +99,10 @@ export default function App() {
   const i18nValue = useMemo(() => ({ locale: settings.locale, t }), [settings.locale, t]);
 
   const highlightProduct = useCallback((productId: number, reason: string) => {
+    const newPath = `/product/${productId}`;
+    if (window.location.pathname !== newPath) {
+      window.history.pushState(null, '', newPath);
+    }
     setContentState((prev) => ({
       ...prev,
       highlightedProductId: productId,
@@ -105,6 +115,9 @@ export default function App() {
   }, []);
 
   const clearHighlight = useCallback(() => {
+    if (window.location.pathname !== '/') {
+      window.history.pushState(null, '', '/');
+    }
     setContentState((prev) => ({
       ...prev,
       highlightedProductId: null,
@@ -112,21 +125,85 @@ export default function App() {
     }));
   }, []);
 
-  const handleProductClick = useCallback((product: Product) => {
-    const msg = t('chat.productAsk')
-      .replace('{name}', product.name)
-      .replace('{name_secondary}', product.name_secondary);
-    setPendingMessage(msg);
+  // Navigate to a product: update URL + highlight + send chat message
+  const navigateToProduct = useCallback((productId: number, productName?: string, productNameSecondary?: string) => {
+    const newPath = `/product/${productId}`;
+    if (window.location.pathname !== newPath) {
+      window.history.pushState(null, '', newPath);
+    }
+    setContentState((prev) => ({
+      ...prev,
+      highlightedProductId: productId,
+      highlightReason: null,
+    }));
+    if (productName) {
+      const msg = t('chat.productAsk')
+        .replace('{name}', productName)
+        .replace('{name_secondary}', productNameSecondary || '');
+      setPendingMessage(msg);
+    }
   }, [t]);
+
+  const handleProductClick = useCallback((product: Product) => {
+    navigateToProduct(product.id, product.name, product.name_secondary);
+  }, [navigateToProduct]);
 
   const handlePendingConsumed = useCallback(() => {
     setPendingMessage(null);
   }, []);
 
+  // Handle browser back/forward navigation
+  useEffect(() => {
+    const onPopState = () => {
+      const productId = parseProductRoute(window.location.pathname);
+      if (productId) {
+        // Navigated back to a product URL — highlight it (no chat message on back/forward)
+        setContentState((prev) => ({
+          ...prev,
+          highlightedProductId: productId,
+          highlightReason: null,
+        }));
+      } else {
+        // Navigated back to root — clear highlight
+        setContentState((prev) => ({
+          ...prev,
+          highlightedProductId: null,
+          highlightReason: null,
+        }));
+      }
+    };
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, []);
+
+  // On initial load, if URL is /product/:id, trigger product selection
+  const [initialRouteHandled, setInitialRouteHandled] = useState(false);
+  useEffect(() => {
+    if (initialRouteHandled || !currentUser) return;
+    const productId = parseProductRoute(window.location.pathname);
+    if (productId) {
+      // We need to fetch the product to get its name for the chat message
+      fetchProducts(settings.locale).then((products) => {
+        const product = products.find((p) => p.id === productId);
+        if (product) {
+          navigateToProduct(product.id, product.name, product.name_secondary);
+        } else {
+          // Product not found in list — still highlight, skip chat message
+          setContentState((prev) => ({
+            ...prev,
+            highlightedProductId: productId,
+            highlightReason: null,
+          }));
+        }
+      }).catch(console.error);
+    }
+    setInitialRouteHandled(true);
+  }, [currentUser, initialRouteHandled, settings.locale, navigateToProduct]);
+
   return (
     <I18nContext.Provider value={i18nValue}>
       <ContentSyncContext.Provider
-        value={{ state: contentState, highlightProduct, filterByCategory, clearHighlight }}
+        value={{ state: contentState, highlightProduct, filterByCategory, clearHighlight, navigateToProduct }}
       >
         <div className="app">
           <Header

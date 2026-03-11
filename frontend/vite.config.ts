@@ -16,4 +16,6 @@ export default defineConfig({
       },
     },
   },
+  // SPA fallback: serve index.html for all non-asset routes (e.g. /product/5)
+  appType: 'spa',
 });

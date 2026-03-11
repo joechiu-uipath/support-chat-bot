@@ -11,6 +11,7 @@ export interface ContentSyncContextType {
   highlightProduct: (productId: number, reason: string) => void;
   filterByCategory: (category: string | null) => void;
   clearHighlight: () => void;
+  navigateToProduct: (productId: number, productName?: string, productNameSecondary?: string) => void;
 }
 
 export const ContentSyncContext = createContext<ContentSyncContextType>({
@@ -18,6 +19,7 @@ export const ContentSyncContext = createContext<ContentSyncContextType>({
   highlightProduct: () => {},
   filterByCategory: () => {},
   clearHighlight: () => {},
+  navigateToProduct: () => {},
 });
 
 export function useContentSync() {
