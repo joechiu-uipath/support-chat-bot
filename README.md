@@ -10,6 +10,9 @@
 
 **Customer Support Chat Bot** is a next-generation AI-powered customer service portal prototype for a premium food company. The application combines a rich product showcase with an intelligent conversational AI assistant that can inform, support, and upsell customers in real time.
 
+> **Warning — Demo Only / No Authentication or Authorization**
+> This project is a demonstration prototype with no built-in security. There is no user sign-in, session management, or API authorization. For example, any user can access order records and customer data belonging to any account. A production system must implement proper authentication, role-based access control, and authorization checks to protect customer data.
+
 ### Design Philosophy
 
 The portal uses a **two-pane layout**:
@@ -212,6 +215,9 @@ The frontend dev server automatically proxies `/api/*` and `/cdn/*` requests to 
 ## 關於此專案
 
 **智慧客服機器人**是新一代 AI 客服入口網站原型。本應用程式結合了豐富的產品展示與智慧對話式 AI 助理，能即時為顧客提供資訊、支援與推薦。
+
+> **警告 — 僅供示範 / 無身份驗證或授權機制**
+> 本專案為示範原型，未內建任何安全機制。沒有使用者登入、session 管理或 API 授權驗證。例如，任何使用者皆可存取其他帳戶的訂單記錄與顧客資料。正式環境系統必須實作適當的身份驗證、角色權限控制及授權檢查，以保護顧客資料。
 
 ### 設計理念
 
