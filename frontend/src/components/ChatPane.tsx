@@ -19,12 +19,16 @@ export default function ChatPane({ pendingMessage, onPendingConsumed, currentUse
   const { locale } = useI18n();
   const t = useT();
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const commandMenuRef = useRef<HTMLDivElement>(null);
   const [input, setInput] = useState('');
   const [showCommands, setShowCommands] = useState(false);
   const [commandFilter, setCommandFilter] = useState('');
   const [selectedCommandIdx, setSelectedCommandIdx] = useState(0);
+  const autoScrollRef = useRef(true);
+  const programmaticScrollRef = useRef(false);
+  const [showScrollBtn, setShowScrollBtn] = useState(false);
 
   const chatBody = {
     language: locale,
@@ -58,9 +62,52 @@ export default function ChatPane({ pendingMessage, onPendingConsumed, currentUse
     }
   }, [pendingMessage, sendMessage, onPendingConsumed]);
 
+  // Auto-scroll only when engaged — use ref to avoid race conditions during streaming
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (autoScrollRef.current) {
+      const container = messagesContainerRef.current;
+      if (container) {
+        programmaticScrollRef.current = true;
+        container.scrollTop = container.scrollHeight;
+        // Clear the flag after a tick so the scroll event from this assignment is ignored
+        requestAnimationFrame(() => {
+          programmaticScrollRef.current = false;
+        });
+      }
+    }
   }, [messages, status]);
+
+  // Detect user-initiated scroll to disengage auto-scroll
+  useEffect(() => {
+    const container = messagesContainerRef.current;
+    if (!container) return;
+
+    const handleScroll = () => {
+      // Ignore scroll events caused by our programmatic scrolling
+      if (programmaticScrollRef.current) return;
+
+      const { scrollTop, scrollHeight, clientHeight } = container;
+      const atBottom = scrollHeight - scrollTop - clientHeight < 40;
+      autoScrollRef.current = atBottom;
+      setShowScrollBtn(!atBottom);
+    };
+
+    container.addEventListener('scroll', handleScroll);
+    return () => container.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToBottom = useCallback(() => {
+    const container = messagesContainerRef.current;
+    if (container) {
+      programmaticScrollRef.current = true;
+      container.scrollTop = container.scrollHeight;
+      requestAnimationFrame(() => {
+        programmaticScrollRef.current = false;
+      });
+    }
+    autoScrollRef.current = true;
+    setShowScrollBtn(false);
+  }, []);
 
   const isStreaming = status === 'streaming' || status === 'submitted';
 
@@ -161,7 +208,7 @@ export default function ChatPane({ pendingMessage, onPendingConsumed, currentUse
         <div className="chat-header-title">{t('chat.title')}</div>
       </div>
 
-      <div className="chat-messages">
+      <div className="chat-messages" ref={messagesContainerRef}>
         {messages.length === 0 && !error && (
           <div className="chat-welcome">
             <div className="chat-welcome-icon">🦐</div>
@@ -246,6 +293,14 @@ export default function ChatPane({ pendingMessage, onPendingConsumed, currentUse
 
         <div ref={messagesEndRef} />
       </div>
+
+      {showScrollBtn && (
+        <button className="chat-scroll-bottom" onClick={scrollToBottom} aria-label="Scroll to bottom">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </button>
+      )}
 
       <div className="chat-input-area">
         {/* Slash command menu */}

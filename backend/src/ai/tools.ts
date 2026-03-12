@@ -218,12 +218,12 @@ export const searchProducts = tool({
       }
     }
 
-    // Combined score: 0.4 * FTS + 0.6 * Vector (or FTS-only if no vector)
+    // Combined score: 0.6 * FTS + 0.4 * Vector (favor full-text matches)
     const hasVector = vectorResults.length > 0;
     const ranked = Array.from(scoreMap.values())
       .map((entry) => {
         const combined = hasVector
-          ? 0.4 * entry.ftsScore + 0.6 * entry.vectorScore
+          ? 0.6 * entry.ftsScore + 0.4 * entry.vectorScore
           : entry.ftsScore;
         return { product: entry.product!, combined };
       })

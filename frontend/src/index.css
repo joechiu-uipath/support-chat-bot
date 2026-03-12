@@ -1018,6 +1018,40 @@ body {
   gap: var(--space-md);
 }
 
+.chat-scroll-bottom {
+  position: absolute;
+  bottom: 140px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s ease;
+  animation: fadeIn 0.2s ease;
+}
+
+.chat-scroll-bottom:hover {
+  color: var(--text-primary);
+  border-color: var(--gold);
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.4);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
 .chat-message {
   max-width: 88%;
   padding: 14px 18px;
